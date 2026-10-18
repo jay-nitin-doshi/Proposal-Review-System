@@ -1,0 +1,128 @@
+{
+  "notice": "Synthetic training artifacts only; score hints are not final LLM evaluation results and are not official Pfizer criteria.",
+  "source_brief": "Agentic RFP Evaluation Mini Project, 6 pages",
+  "criteria": [
+    {
+      "name": "Manufacturing capability & process control",
+      "weight_percent": 20,
+      "description": "Facility fit, process understanding, equipment, batch controls, contamination prevention, validation approach."
+    },
+    {
+      "name": "GMP, quality system & product quality",
+      "weight_percent": 20,
+      "description": "GMP evidence, quality management system, deviations/CAPA, change control, batch records, OOS handling, traceability."
+    },
+    {
+      "name": "Regulatory readiness & documentation",
+      "weight_percent": 15,
+      "description": "Applicable manufacturing licences, inspection history, regulatory status, DMF/technical dossier support where applicable, document completeness."
+    },
+    {
+      "name": "Supply capacity & business continuity",
+      "weight_percent": 10,
+      "description": "Annual/monthly capacity, lead times, raw-material sourcing, inventory strategy, resilience, contingency plans."
+    },
+    {
+      "name": "Implementation & technology transfer",
+      "weight_percent": 10,
+      "description": "Project plan, milestones, validation/qualification, technology transfer, staffing, risks, realistic schedule."
+    },
+    {
+      "name": "Commercial value & price transparency",
+      "weight_percent": 15,
+      "description": "Unit price, MOQ, tooling/testing/packaging costs, payment terms, assumptions, total cost of ownership."
+    },
+    {
+      "name": "EHS, security & risk controls",
+      "weight_percent": 5,
+      "description": "Worker/environmental safety, waste handling, access control, data integrity, risk register and mitigation."
+    },
+    {
+      "name": "Support, experience & references",
+      "weight_percent": 5,
+      "description": "Relevant manufacturing history, complaint handling, recall support, technical service, references and response SLAs."
+    }
+  ],
+  "suppliers": [
+    {
+      "name": "Asterion Pharma Manufacturing Ltd.",
+      "submission_date": "2026-10-02",
+      "historical_experience_rating": 4.6,
+      "proposal_pdf": "asterion_pharma_manufacturing_ltd_proposal.pdf",
+      "synthetic_score_hints_0_to_10": {
+        "Manufacturing capability & process control": 9,
+        "GMP, quality system & product quality": 9,
+        "Regulatory readiness & documentation": 8,
+        "Supply capacity & business continuity": 8,
+        "Implementation & technology transfer": 7,
+        "Commercial value & price transparency": 6,
+        "EHS, security & risk controls": 8,
+        "Support, experience & references": 8
+      }
+    },
+    {
+      "name": "BrightPath Generics & Chemicals Pvt. Ltd.",
+      "submission_date": "2026-10-05",
+      "historical_experience_rating": 2.1,
+      "proposal_pdf": "brightpath_generics_chemicals_pvt_ltd_proposal.pdf",
+      "synthetic_score_hints_0_to_10": {
+        "Manufacturing capability & process control": 6,
+        "GMP, quality system & product quality": 4,
+        "Regulatory readiness & documentation": 3,
+        "Supply capacity & business continuity": 7,
+        "Implementation & technology transfer": 5,
+        "Commercial value & price transparency": 10,
+        "EHS, security & risk controls": 4,
+        "Support, experience & references": 3
+      }
+    },
+    {
+      "name": "NexaCura Life Sciences Ltd.",
+      "submission_date": "2026-10-01",
+      "historical_experience_rating": 4.1,
+      "proposal_pdf": "nexacura_life_sciences_ltd_proposal.pdf",
+      "synthetic_score_hints_0_to_10": {
+        "Manufacturing capability & process control": 8,
+        "GMP, quality system & product quality": 9,
+        "Regulatory readiness & documentation": 8,
+        "Supply capacity & business continuity": 7,
+        "Implementation & technology transfer": 9,
+        "Commercial value & price transparency": 8,
+        "EHS, security & risk controls": 8,
+        "Support, experience & references": 9
+      }
+    },
+    {
+      "name": "OrbitMed Contract Manufacturing Co.",
+      "submission_date": "2026-10-03",
+      "historical_experience_rating": 4.8,
+      "proposal_pdf": "orbitmed_contract_manufacturing_co_proposal.pdf",
+      "synthetic_score_hints_0_to_10": {
+        "Manufacturing capability & process control": 7,
+        "GMP, quality system & product quality": 8,
+        "Regulatory readiness & documentation": 7,
+        "Supply capacity & business continuity": 9,
+        "Implementation & technology transfer": 5,
+        "Commercial value & price transparency": 8,
+        "EHS, security & risk controls": 7,
+        "Support, experience & references": 9
+      }
+    },
+    {
+      "name": "CedarVale Pharmaceutical Works Ltd.",
+      "submission_date": "2026-10-06",
+      "historical_experience_rating": 3.4,
+      "proposal_pdf": "cedarvale_pharmaceutical_works_ltd_proposal.pdf",
+      "synthetic_score_hints_0_to_10": {
+        "Manufacturing capability & process control": 7,
+        "GMP, quality system & product quality": 8,
+        "Regulatory readiness & documentation": 7,
+        "Supply capacity & business continuity": 6,
+        "Implementation & technology transfer": 7,
+        "Commercial value & price transparency": 9,
+        "EHS, security & risk controls": 7,
+        "Support, experience & references": 6
+      }
+    }
+  ]
+}
