@@ -31,10 +31,11 @@ Rules:
   evidence "", and identify what is missing.
 - Identify missing evidence, exclusions, assumptions, contradictions, and risks.
 - Do not compute an overall score, benchmark, rank, gate decision, or award decision.
-- Return a JSON object only with keys supplier_name, criteria, risks,
-  overall_summary. Each criterion must include criterion_id, score, max_score,
-  justification, evidence, evidence_page (integer or null), confidence, and
-  missing_evidence (string list).
+- Return exactly one JSON object with no Markdown fences, commentary, or outer
+  wrapper. Use exactly the keys supplier_name, criteria, risks, overall_summary.
+  Each criterion must include criterion_id, score, max_score, justification,
+  evidence, evidence_page (integer or null), confidence, and missing_evidence
+  (string list). Use the supplied criterion_id values exactly.
 
 <proposal_document>
 {proposal_text}

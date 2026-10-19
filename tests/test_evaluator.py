@@ -158,6 +158,23 @@ def test_valid_scorecard_gets_deterministic_and_llm_validation():
     )
 
 
+def test_raw_json_scorecard_is_used_when_provider_schema_parser_fails():
+    raw_scorecard = json.dumps(scorecard())
+    wrapped_response = {
+        "_raw_json_response": True,
+        "parsing_error": "provider returned a valid JSON object with a schema mismatch",
+        "content": f"```json\n{raw_scorecard}\n```",
+    }
+    fake_chat = FakeChatOpenAI([wrapped_response], [review()])
+
+    with patch("src.evaluator.ChatOpenAI", return_value=fake_chat):
+        result, raw = call_evaluator()
+
+    assert result["criteria_by_id"]["quality_system"]["score"] == 7
+    assert raw.startswith("```json")
+    assert len(fake_chat.models[TenderScorecard].configs) == 1
+
+
 def test_graph_repairs_incomplete_scorecard_once():
     fake_chat = FakeChatOpenAI(
         [scorecard(missing_criterion=True), scorecard()],
@@ -306,6 +323,35 @@ def test_wrapped_provider_text_findings_trigger_repair_with_context():
     assert len(generation_calls) == 2
     assert finding in generation_calls[1][0][-1].content
     assert result["llm_validation"]["passed"] is True
+
+
+def test_raw_review_json_content_blocks_are_normalized():
+    wrapped_response = {
+        "_raw_json_response": True,
+        "parsing_error": "provider-specific structured output parsing failed",
+        "content": [
+            {
+                "type": "text",
+                "text": json.dumps(
+                    {
+                        "validation_result": "passed",
+                        "findings": [],
+                        "risks": ["Supplier claims require verification."],
+                    }
+                ),
+            }
+        ],
+    }
+    fake_chat = FakeChatOpenAI([scorecard()], [wrapped_response])
+
+    with patch("src.evaluator.ChatOpenAI", return_value=fake_chat):
+        result, _ = call_evaluator()
+
+    assert result["llm_validation"] == {
+        "passed": True,
+        "findings": [],
+        "risks": ["Supplier claims require verification."],
+    }
 
 
 def test_parsed_wrapped_provider_review_is_normalized_before_validation():

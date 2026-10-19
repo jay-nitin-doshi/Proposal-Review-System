@@ -95,13 +95,16 @@ enable it. Traces can contain full proposal text, scorecards, and evidence.
 Manual reviewer mode does not require a provider key.
 
 The evaluator uses the selected provider's LangChain adapter and a LangGraph
-to generate a structured Pydantic scorecard, validate it against active
-criteria in Python, and run a second LLM evidence-critique pass. Validation
-issues trigger one bounded repair attempt; cited pages beyond the extracted
-document page count are rejected. Persistent issues become an evaluation error
-and are not ranked. The critique uses the same configured model, so it is an
-additional check—not independent verification. Python remains authoritative
-for evidence rules, scoring, ranking, and eligibility gates.
+to generate a schema-constrained scorecard, validate it against active criteria
+in Python, and run a second LLM evidence-critique pass. Provider-specific parsed
+output and raw JSON responses are normalized to the same internal contract;
+valid raw JSON is still used if a provider's structured-output parser fails.
+Validation issues trigger one bounded repair attempt; cited pages beyond the
+extracted document page count are rejected. Persistent issues become an
+evaluation error and are not ranked. The critique uses the same configured
+model, so it is an additional check—not independent verification. Python
+remains authoritative for evidence rules, scoring, ranking, and eligibility
+gates.
 
 The critique parser also accepts provider JSON-mode responses wrapped under
 `validation_result` with `issue`, `material` or `material_issue`, and
