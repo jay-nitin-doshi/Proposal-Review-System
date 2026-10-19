@@ -31,13 +31,16 @@ From the project directory in PowerShell:
 py -3.13 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
-streamlit run app.py
+python -m streamlit run app.py
 ```
 
 Open the local URL printed by Streamlit. Upload the included synthetic PDFs to
 exercise the workflow. A local SQLite database is created at
 `data\rfp_evaluation.db` by default. Set `RFP_DB_PATH` to use a different path.
 Database files and secrets are excluded from Git.
+
+Using `python -m streamlit` launches Streamlit through the activated Python
+environment and avoids Windows script-launcher errors when starting through `uv`.
 
 For an evidence-rich single-supplier test, upload
 `synthetic_calyxora_pharmaworks_proposal.pdf`, enter the supplier name shown in
@@ -102,7 +105,13 @@ for evidence rules, scoring, ranking, and eligibility gates.
 
 The critique parser also accepts provider JSON-mode responses wrapped under
 `validation_result` with `issue`, `material` or `material_issue`, and
-`overall_validation` fields.
+`overall_validation` fields, including a string verdict such as
+`"validation_result": "passed"` with top-level findings. Plain-text or
+criterion-unmapped findings are retained as review risks and force a repair
+attempt rather than being ignored. Criterion findings may describe their text
+with `explanation`, `issue`, or `finding`; omitted severity defaults to low.
+Low-severity criterion findings are advisory and do not fail a scorecard by
+themselves; high- or critical-severity evidence mismatches remain blocking.
 Synthetic/demo labeling or lack of independent verification is recorded as a
 review risk, not by itself as a score-evidence mismatch; substantive evidence
 contradictions still trigger repair and can fail closed.

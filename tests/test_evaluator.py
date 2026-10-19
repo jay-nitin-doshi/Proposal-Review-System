@@ -1,3 +1,4 @@
+import json
 from unittest.mock import patch
 
 import pytest
@@ -249,6 +250,152 @@ def test_wrapped_provider_findings_map_issue_and_material_issue_fields():
     assert "quality_system (high): The source does not support this score." in retry_request
     assert result["llm_validation"]["passed"] is True
     assert "Verify authenticity." in result["risks"]
+
+
+def test_wrapped_provider_finding_field_is_normalized():
+    message = "The justification is supported by the proposal's stated evidence gap."
+    wrapped_response = {
+        "validation_result": {
+            "passed": False,
+            "findings": [
+                {
+                    "criterion_id": "manufacturing_capability",
+                    "finding": message,
+                }
+            ],
+        }
+    }
+    fake_chat = FakeChatOpenAI([scorecard()], [wrapped_response])
+
+    with patch("src.evaluator.ChatOpenAI", return_value=fake_chat):
+        result, _ = call_evaluator()
+
+    assert len(fake_chat.models[TenderScorecard].configs) == 1
+    assert result["llm_validation"] == {
+        "passed": True,
+        "findings": [
+            {
+                "criterion_id": "manufacturing_capability",
+                "severity": "low",
+                "explanation": message,
+            }
+        ],
+        "risks": [],
+    }
+
+
+def test_wrapped_provider_text_findings_trigger_repair_with_context():
+    finding = "The evidence does not establish quality and reliability."
+    wrapped_response = {
+        "_raw_json_response": True,
+        "content": (
+            '{"validation_result":{"passed":false,"findings":['
+            f"{json.dumps(finding)}"
+            '],"risks":[]}}'
+        ),
+    }
+    fake_chat = FakeChatOpenAI(
+        [scorecard(), scorecard()],
+        [wrapped_response, review()],
+    )
+
+    with patch("src.evaluator.ChatOpenAI", return_value=fake_chat):
+        result, _ = call_evaluator()
+
+    generation_calls = fake_chat.models[TenderScorecard].configs
+    assert len(generation_calls) == 2
+    assert finding in generation_calls[1][0][-1].content
+    assert result["llm_validation"]["passed"] is True
+
+
+def test_parsed_wrapped_provider_review_is_normalized_before_validation():
+    finding = "The evidence does not establish quality and reliability."
+    wrapped_response = {
+        "validation_result": {
+            "passed": False,
+            "findings": [finding],
+        }
+    }
+    fake_chat = FakeChatOpenAI(
+        [scorecard(), scorecard()],
+        [wrapped_response, review()],
+    )
+
+    with patch("src.evaluator.ChatOpenAI", return_value=fake_chat):
+        result, _ = call_evaluator()
+
+    generation_calls = fake_chat.models[TenderScorecard].configs
+    assert len(generation_calls) == 2
+    assert finding in generation_calls[1][0][-1].content
+    assert result["llm_validation"]["passed"] is True
+
+
+def test_provider_review_string_validation_result_is_normalized():
+    wrapped_response = {
+        "validation_result": "passed",
+        "findings": [],
+    }
+    fake_chat = FakeChatOpenAI([scorecard()], [wrapped_response])
+
+    with patch("src.evaluator.ChatOpenAI", return_value=fake_chat):
+        result, _ = call_evaluator()
+
+    assert result["llm_validation"] == {
+        "passed": True,
+        "findings": [],
+        "risks": [],
+    }
+    assert len(fake_chat.models[TenderScorecard].configs) == 1
+    assert len(fake_chat.models[ScorecardReview].configs) == 1
+
+
+def test_provider_review_string_validation_failure_triggers_repair():
+    finding = "The evidence does not establish quality standards."
+    wrapped_response = {
+        "validation_result": "failed",
+        "findings": [finding],
+    }
+    fake_chat = FakeChatOpenAI(
+        [scorecard(), scorecard()],
+        [wrapped_response, review()],
+    )
+
+    with patch("src.evaluator.ChatOpenAI", return_value=fake_chat):
+        result, _ = call_evaluator()
+
+    generation_calls = fake_chat.models[TenderScorecard].configs
+    assert len(generation_calls) == 2
+    assert finding in generation_calls[1][0][-1].content
+    assert result["llm_validation"]["passed"] is True
+
+
+def test_wrapped_review_with_only_low_findings_is_advisory():
+    low_findings = [
+        {
+            "criterion_id": row["criterion_id"],
+            "severity": "low",
+            "explanation": (
+                "The proposal acknowledges that further details are needed, "
+                "so the limited justification is supported."
+            ),
+        }
+        for row in criteria()
+    ]
+    wrapped_response = {
+        "validation_result": {
+            "passed": False,
+            "findings": low_findings,
+        }
+    }
+    fake_chat = FakeChatOpenAI([scorecard()], [wrapped_response])
+
+    with patch("src.evaluator.ChatOpenAI", return_value=fake_chat):
+        result, _ = call_evaluator()
+
+    assert len(fake_chat.models[TenderScorecard].configs) == 1
+    assert len(fake_chat.models[ScorecardReview].configs) == 1
+    assert result["llm_validation"]["passed"] is True
+    assert result["llm_validation"]["findings"] == low_findings
 
 
 def test_graph_fails_closed_after_one_unsuccessful_repair():
